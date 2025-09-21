@@ -1,3 +1,7 @@
-"リプライ用": file => file.name.includes("Alarm") || file.name.includes("SIGNAL"),
-"フォロー用": file => file.name.includes("Crystal") || file.name.includes("TooShy"),
-"その他": file => true
+<script>
+  const categoryRules = {
+    "リプライ用": file => file.name.includes("Alarm") || file.name.includes("SIGNAL"),
+    "フォロー用": file => file.name.includes("Crystal") || file.name.includes("TooShy"),
+    "その他": file => true
+  };
+</script>
