@@ -27,35 +27,46 @@
 </head>
 <body>
   <h1>通知音一覧</h1>
-  <ul>
-    <li>
-      <a href="Ho4a1.mp3">Ho4a1.mp3</a>
-      <audio controls src="Ho4a1.mp3"></audio>
-      <button class="copy-btn" data-url="https://rie0924.github.io/notification-sounds/Ho4a1.mp3">URLをコピー</button>
-    </li>
-    <li>
-      <a href="Alarm01.wav">Alarm01.wav</a>
-      <audio controls src="Alarm01.wav"></audio>
-      <button class="copy-btn" data-url="https://rie0924.github.io/notification-sounds/Alarm01.wav">URLをコピー</button>
-    </li>
-    <li>
-      <a href="SoftPing.mp3">SoftPing.mp3</a>
-      <audio controls src="SoftPing.mp3"></audio>
-      <button class="copy-btn" data-url="https://rie0924.github.io/notification-sounds/SoftPing.mp3">URLをコピー</button>
-    </li>
-  </ul>
+  <ul id="sound-list"></ul>
 
   <script>
-    document.querySelectorAll('.copy-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const url = button.getAttribute('data-url');
+    const baseURL = "https://rie0924.github.io/notification-sounds/";
+    const files = [
+      "Ho4a1.mp3",
+      "Alarm01.wav",
+      "Alarm02.wav",
+      "Alarm03.wav",
+      "ComeAsYouAre.mp3",
+      "CrystalTuner4096Hz.mp3",
+      "Piero.mp3",
+      "SIGNAL.mp3",
+      "TooShyShy_Sims2.mp3",
+      "TopGun.wav",
+      "Waves.wav"
+    ];
+
+    const list = document.getElementById("sound-list");
+
+    files.forEach(file => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <a href="${file}">${file}</a>
+        <audio controls src="${file}"></audio>
+        <button class="copy-btn" data-url="${baseURL}${file}">URLをコピー</button>
+      `;
+      list.appendChild(li);
+    });
+
+    document.addEventListener("click", e => {
+      if (e.target.classList.contains("copy-btn")) {
+        const url = e.target.getAttribute("data-url");
         navigator.clipboard.writeText(url).then(() => {
-          button.textContent = "コピーしました！";
+          e.target.textContent = "コピーしました！";
           setTimeout(() => {
-            button.textContent = "URLをコピー";
+            e.target.textContent = "URLをコピー";
           }, 1500);
         });
-      });
+      }
     });
   </script>
 </body>
