@@ -1,7 +1,94 @@
-<script>
-  const categoryRules = {
-    "リプライ用": file => file.name.includes("Alarm") || file.name.includes("SIGNAL"),
-    "フォロー用": file => file.name.includes("Crystal") || file.name.includes("TooShy"),
-    "その他": file => true
-  };
-</script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>通知音一覧（カテゴリ分け）</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f9f9f9; }
+    h1 { color: #333; }
+    h2 { margin-top: 2em; color: #555; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 1em 0; background: #fff; padding: 1em; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    a { text-decoration: none; color: #007acc; font-weight: bold; }
+    audio { display: block; margin-top: 0.5em; width: 100%; max-width: 400px; }
+    button.copy-btn {
+      margin-top: 0.5em;
+      padding: 0.4em 0.8em;
+      font-size: 0.9em;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button.copy-btn:hover {
+      background-color: #005f99;
+    }
+  </style>
+</head>
+<body>
+  <h1>通知音一覧（カテゴリ分け）</h1>
+  <div id="categories"></div>
+
+  <script>
+    const baseURL = "https://rie0924.github.io/notification-sounds/";
+    const apiURL = "https://api.github.com/repos/rie0924/notification-sounds/contents/";
+
+    const categoryRules = {
+      "リプライ用": file => file.name.includes("Alarm") || file.name.includes("SIGNAL") || file.name.includes("Ho4a1"),
+      "フォロー用": file => file.name.includes("Crystal") || file.name.includes("TooShy"),
+      "その他": file => true
+    };
+
+    fetch(apiURL)
+      .then(res => res.json())
+      .then(files => {
+        const categorized = { "リプライ用": [], "フォロー用": [], "その他": [] };
+
+        files.forEach(file => {
+          if (file.name.match(/\.(mp3|wav)$/i)) {
+            for (const [category, rule] of Object.entries(categoryRules)) {
+              if (rule(file)) {
+                categorized[category].push(file);
+                break;
+              }
+            }
+          }
+        });
+
+        const container = document.getElementById("categories");
+
+        for (const [category, items] of Object.entries(categorized)) {
+          const section = document.createElement("section");
+          section.innerHTML = `<h2>${category}</h2><ul></ul>`;
+          const ul = section.querySelector("ul");
+
+          items.forEach(file => {
+            const li = document.createElement("li");
+            li.innerHTML = `
+              <a href="${baseURL}${file.name}">${file.name}</a>
+              <audio controls src="${baseURL}${file.name}"></audio>
+              <button class="copy-btn" data-url="${baseURL}${file.name}">URLをコピー</button>
+            `;
+            ul.appendChild(li);
+          });
+
+          container.appendChild(section);
+        }
+      });
+
+    document.addEventListener("click", e => {
+      if (e.target.classList.contains("copy-btn")) {
+        const url = e.target.getAttribute("data-url");
+        navigator.clipboard.writeText(url).then(() => {
+          e.target.textContent = "コピーしました！";
+          setTimeout(() => {
+            e.target.textContent = "URLをコピー";
+          }, 1500);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+
